@@ -3,11 +3,9 @@ import java.util.ArrayList;
 
 public class MatrixOperations implements MLRProcedure {
     Operations operations;
-
     MatrixOperations() {
         this.operations = new Operations();
     }
-
     @Override
     public Element calculate(ArrayList<Element> data) {
         Matrixs M = transformIndependentToMatrix(data);
@@ -23,7 +21,6 @@ public class MatrixOperations implements MLRProcedure {
         Element dt = new Element(thirdPart[0][0], thirdPart[1][0], thirdPart[2][0]);
         return dt;
     }
-
     private Matrixs transformIndependentToMatrix(ArrayList<Element> data) {
         double[][] transposed = new double[3][data.size()];
         double[][] matrix = new double[data.size()][3];
@@ -41,7 +38,6 @@ public class MatrixOperations implements MLRProcedure {
         result.xTransposed = transposed;
         return result;
     }
-
     private double[][] getYMatrix(ArrayList<Element> data) {
         double[][] result = new double[data.size()][1];
         for (int i = 0; i < data.size(); i++) {

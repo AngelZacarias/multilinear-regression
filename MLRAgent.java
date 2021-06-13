@@ -7,14 +7,13 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
 
 public class MLRAgent extends Agent {
-	int TOTAL_REGISTERS = 17;
   	MLR mlr;
-  	MLRGui myGui;
+  	MLRGUI myGui;
   	protected void setup() {
     	System.out.println("Agent " + getLocalName() + " has started.");
     	mlr = new MLR(new MatrixOperations());
     	mlr.setData(this.getDataset());
-		myGui = new MLRGui(this);
+		myGui = new MLRGUI(this);
     	myGui.showGui();
 	}
 
@@ -26,6 +25,7 @@ public class MLRAgent extends Agent {
 			double b0 = mlr.getB0();
 			double b1 = mlr.getB1();
 			double b2 = mlr.getB2();
+			System.out.println("Multiple Linear Regression");
 			System.out.println("y = b0 + b1(x1) + b2(x2)");
 			System.out.println(String.valueOf(yPredicted) + " = " + String.valueOf(b0) + 
 				" + " + String.valueOf(b1) + "(" + String.valueOf(x1) + ")" + " + " + 
