@@ -75,4 +75,24 @@ public class Operations {
             }
         }
     }
+
+    public double solveDeterminant(double[][] matrix) {
+        double[] mainDiagonals = new double[3];
+        double[] secondaryDiagonals = new double[3]; 
+        double mainDiagonal=0, secondaryDiagonal=0;
+
+        mainDiagonals[0] += (matrix[0][0] * matrix[1][1] * matrix[2][2]);
+        mainDiagonals[1] += (matrix[0][1] * matrix[1][2] * matrix[2][3]);
+        mainDiagonals[2] += (matrix[0][2] * matrix[1][3] * matrix[2][4]);
+
+        secondaryDiagonals[0] += (matrix[2][0] * matrix[1][1] * matrix[0][2]);
+        secondaryDiagonals[1] += (matrix[2][1] * matrix[1][2] * matrix[0][3]);
+        secondaryDiagonals[2] += (matrix[2][2] * matrix[1][3] * matrix[0][4]);
+
+        for (int i = 0; i < matrix.length; i++) {
+            mainDiagonal += mainDiagonals[i];
+            secondaryDiagonal += secondaryDiagonals[i];
+        }
+        return mainDiagonal - secondaryDiagonal;
+    }
 }

@@ -5,229 +5,220 @@ import java.lang.*;
 
 public class Cramer implements MLRProcedure {
   Operations operations;
-  Map<String, Double> valuesMap = new HashMap<String, Double>();
+  Map<String, Double> values = new HashMap<String, Double>();
 
   Cramer() {
     this.operations = new Operations();
   }
 
   @Override
-  public DataRegister calculate(ArrayList<DataRegister> data) {
-    double[][] matrixForSystemDeterminant, matrixForDeterminantX,
-      matrixForDeterminantX2, matrixForDeterminantY = new double[3][5];
+  public Element calculate(ArrayList<Element> data) {
+    double[][] MForSystemDeterminant, MForDeterminantX,
+    MForDeterminantX2, MForDeterminantY = new double[3][5];
     double x1, x2, y, systemDeterminant;
-    this.fillValuesMap(data);
+    this.fillvalues(data);
 
-    matrixForSystemDeterminant = this.getMatrixForSystemDeterminant();
-    matrixForDeterminantX = this.getMatrixForDeterminantX();
-    matrixForDeterminantX2 = this.getMatrixForDeterminantX2();
-    matrixForDeterminantY = this.getMatrixForDeterminantY();
+    MForSystemDeterminant = this.getMForSystemDeterminant();
+    MForDeterminantX = this.getMForDeterminantX();
+    MForDeterminantX2 = this.getMForDeterminantX2();
+    MForDeterminantY = this.getMForDeterminantY();
 
-    System.out.println("Matrices:");
-    System.out.println("matrixForSystemDeterminant: " + Arrays.deepToString(matrixForSystemDeterminant));
-    System.out.println("matrixForDeterminantX: " + Arrays.deepToString(matrixForDeterminantX));
-    System.out.println("matrixForDeterminantX2: " + Arrays.deepToString(matrixForDeterminantX2));
-    System.out.println("matrixForDeterminantY: " + Arrays.deepToString(matrixForDeterminantY));
-    System.out.println("");
-
-    systemDeterminant = operations.solveDeterminant(matrixForSystemDeterminant);
-    x1 = operations.solveDeterminant(matrixForDeterminantX);
+    systemDeterminant = operations.solveDeterminant(MForSystemDeterminant);
+    x1 = operations.solveDeterminant(MForDeterminantX);
     x1 = x1/systemDeterminant;
-    x2 = operations.solveDeterminant(matrixForDeterminantX2);
+    x2 = operations.solveDeterminant(MForDeterminantX2);
     x2 = x2/systemDeterminant;
-    y = operations.solveDeterminant(matrixForDeterminantY);
+    y = operations.solveDeterminant(MForDeterminantY);
     y = y/systemDeterminant;
 
-    DataRegister dt = new DataRegister(x1, x2, y); //Solutions
+    Element dt = new Element(x1, x2, y); //Solutions
     return dt;
   }
 
-  public double[][] getMatrixForDeterminantY() {
-    double[][] matrix = new double[3][5];
-    matrix[0][0] = valuesMap.get("n");
-    matrix[0][1] = valuesMap.get("summationX1");
-    matrix[0][2] = valuesMap.get("summationY");
-    matrix[0][3] = valuesMap.get("n");
-    matrix[0][4] = valuesMap.get("summationX1");
+  public double[][] getMForDeterminantY() {
+    double[][] M = new double[3][5];
+    M[0][0] = values.get("n");
+    M[0][1] = values.get("sx1");
+    M[0][2] = values.get("sy");
+    M[0][3] = values.get("n");
+    M[0][4] = values.get("sx1");
 
-    matrix[1][0] = valuesMap.get("summationX1");
-    matrix[1][1] = valuesMap.get("summationX1Square");
-    matrix[1][2] = valuesMap.get("summationX1Y");
-    matrix[1][3] = valuesMap.get("summationX1");
-    matrix[1][4] = valuesMap.get("summationX1Square");
+    M[1][0] = values.get("sx1");
+    M[1][1] = values.get("sx1sq");
+    M[1][2] = values.get("sx1Y");
+    M[1][3] = values.get("sx1");
+    M[1][4] = values.get("sx1sq");
 
-    matrix[2][0] = valuesMap.get("summationX2");
-    matrix[2][1] = valuesMap.get("summationX1X2");
-    matrix[2][2] = valuesMap.get("summationX2Y");
-    matrix[2][3] = valuesMap.get("summationX2");
-    matrix[2][4] = valuesMap.get("summationX1X2");
-    return matrix;
+    M[2][0] = values.get("sx2");
+    M[2][1] = values.get("sx1X2");
+    M[2][2] = values.get("sx2Y");
+    M[2][3] = values.get("sx2");
+    M[2][4] = values.get("sx1X2");
+    return M;
   }
 
-  public double[][] getMatrixForDeterminantX2() {
-    double[][] matrix = new double[3][5];
-    matrix[0][0] = valuesMap.get("n");
-    matrix[0][1] = valuesMap.get("summationY");
-    matrix[0][2] = valuesMap.get("summationX2");
-    matrix[0][3] = valuesMap.get("n");
-    matrix[0][4] = valuesMap.get("summationY");
+  public double[][] getMForDeterminantX2() {
+    double[][] M = new double[3][5];
+    M[0][0] = values.get("n");
+    M[0][1] = values.get("sy");
+    M[0][2] = values.get("sx2");
+    M[0][3] = values.get("n");
+    M[0][4] = values.get("sy");
 
-    matrix[1][0] = valuesMap.get("summationX1");
-    matrix[1][1] = valuesMap.get("summationX1Y");
-    matrix[1][2] = valuesMap.get("summationX1X2");
-    matrix[1][3] = valuesMap.get("summationX1");
-    matrix[1][4] = valuesMap.get("summationX1Y");
+    M[1][0] = values.get("sx1");
+    M[1][1] = values.get("sx1Y");
+    M[1][2] = values.get("sx1X2");
+    M[1][3] = values.get("sx1");
+    M[1][4] = values.get("sx1Y");
 
-    matrix[2][0] = valuesMap.get("summationX2");
-    matrix[2][1] = valuesMap.get("summationX2Y");
-    matrix[2][2] = valuesMap.get("summationX2Square");
-    matrix[2][3] = valuesMap.get("summationX2");
-    matrix[2][4] = valuesMap.get("summationX2Y");
-    return matrix;
+    M[2][0] = values.get("sx2");
+    M[2][1] = values.get("sx2Y");
+    M[2][2] = values.get("sx2sq");
+    M[2][3] = values.get("sx2");
+    M[2][4] = values.get("sx2Y");
+    return M;
   }
 
-  public double[][] getMatrixForDeterminantX() {
-    double[][] matrix = new double[3][5];
-    matrix[0][0] = valuesMap.get("summationY");
-    matrix[0][1] = valuesMap.get("summationX1");
-    matrix[0][2] = valuesMap.get("summationX2");
-    matrix[0][3] = valuesMap.get("summationY");
-    matrix[0][4] = valuesMap.get("summationX1");
+  public double[][] getMForDeterminantX() {
+    double[][] M = new double[3][5];
+    M[0][0] = values.get("sy");
+    M[0][1] = values.get("sx1");
+    M[0][2] = values.get("sx2");
+    M[0][3] = values.get("sy");
+    M[0][4] = values.get("sx1");
 
-    matrix[1][0] = valuesMap.get("summationX1Y");
-    matrix[1][1] = valuesMap.get("summationX1Square");
-    matrix[1][2] = valuesMap.get("summationX1X2");
-    matrix[1][3] = valuesMap.get("summationX1Y");
-    matrix[1][4] = valuesMap.get("summationX1Square");
+    M[1][0] = values.get("sx1Y");
+    M[1][1] = values.get("sx1sq");
+    M[1][2] = values.get("sx1X2");
+    M[1][3] = values.get("sx1Y");
+    M[1][4] = values.get("sx1sq");
 
-    matrix[2][0] = valuesMap.get("summationX2Y");
-    matrix[2][1] = valuesMap.get("summationX1X2");
-    matrix[2][2] = valuesMap.get("summationX2Square");
-    matrix[2][3] = valuesMap.get("summationX2Y");
-    matrix[2][4] = valuesMap.get("summationX1X2");
-    return matrix;
+    M[2][0] = values.get("sx2Y");
+    M[2][1] = values.get("sx1X2");
+    M[2][2] = values.get("sx2sq");
+    M[2][3] = values.get("sx2Y");
+    M[2][4] = values.get("sx1X2");
+    return M;
   }
 
-  public double[][] getMatrixForSystemDeterminant() {
-    double[][] matrix = new double[3][5];
-    matrix[0][0] = valuesMap.get("n");
-    matrix[0][1] = valuesMap.get("summationX1");
-    matrix[0][2] = valuesMap.get("summationX2");
-    matrix[0][3] = valuesMap.get("n");
-    matrix[0][4] = valuesMap.get("summationX1");
+  public double[][] getMForSystemDeterminant() {
+    double[][] M = new double[3][5];
+    M[0][0] = values.get("n");
+    M[0][1] = values.get("sx1");
+    M[0][2] = values.get("sx2");
+    M[0][3] = values.get("n");
+    M[0][4] = values.get("sx1");
 
-    matrix[1][0] = valuesMap.get("summationX1");
-    matrix[1][1] = valuesMap.get("summationX1Square");
-    matrix[1][2] = valuesMap.get("summationX1X2");
-    matrix[1][3] = valuesMap.get("summationX1");
-    matrix[1][4] = valuesMap.get("summationX1Square");
+    M[1][0] = values.get("sx1");
+    M[1][1] = values.get("sx1sq");
+    M[1][2] = values.get("sx1X2");
+    M[1][3] = values.get("sx1");
+    M[1][4] = values.get("sx1sq");
 
-    matrix[2][0] = valuesMap.get("summationX2");
-    matrix[2][1] = valuesMap.get("summationX1X2");
-    matrix[2][2] = valuesMap.get("summationX2Square");
-    matrix[2][3] = valuesMap.get("summationX2");
-    matrix[2][4] = valuesMap.get("summationX1X2");
-    return matrix;
+    M[2][0] = values.get("sx2");
+    M[2][1] = values.get("sx1X2");
+    M[2][2] = values.get("sx2sq");
+    M[2][3] = values.get("sx2");
+    M[2][4] = values.get("sx1X2");
+    return M;
   }
 
-  public void fillValuesMap(ArrayList<DataRegister> data) {
-    double n=17, summationX1, summationX2, summationY, summationX2Square, 
-    summationX1Square, summationX1X2, summationX1Y, summationX2Y;
+  public void fillvalues(ArrayList<Element> data) {
+    double n=17, sx1, sx2, sy, sx2sq, 
+    sx1sq, sx1X2, sx1Y, sx2Y;
     
-    summationX1 = this.getSummationX1(data);
-    summationX2 = this.getSummationX2(data);
-    summationY = this.getSummationY(data);
+    sx1 = this.operate(data, "sumx1");
+    sx2 = this.operate(data, "sumx2");
+    sy = this.operate(data, "sumy");
 
-    summationX1Square = this.getSummationX1Square(data);
-    summationX2Square = this.getSummationX2Square(data);
+    sx1sq = this.operate(data, "sumx1sq");
+    sx2sq = this.operate(data, "sumx2sq");
 
-    summationX1X2 = this.getSummationX1X2(data);
-    summationX1Y = this.getSummationX1Y(data);
-    summationX2Y = this.getSummationX2Y(data);
+    sx1X2 = this.operate(data, "sumx1x2");
+    sx1Y = this.operate(data, "sumx1y");
+    sx2Y = this.operate(data, "sumx2y");
+
+    
 
     //At the end make the assignments
-    valuesMap.put("n", n);
-    valuesMap.put("summationX1", summationX1);
-    valuesMap.put("summationX2", summationX2);
-    valuesMap.put("summationY", summationY);
-    valuesMap.put("summationX1Square", summationX1Square);
-    valuesMap.put("summationX2Square", summationX2Square);
-    valuesMap.put("summationX1X2", summationX1X2);
-    valuesMap.put("summationX1Y", summationX1Y);
-    valuesMap.put("summationX2Y", summationX2Y);
+    values.put("n", n);
+    values.put("sx1", sx1);
+    values.put("sx2", sx2);
+    values.put("sy", sy);
+    values.put("sx1sq", sx1sq);
+    values.put("sx2sq", sx2sq);
+    values.put("sx1X2", sx1X2);
+    values.put("sx1Y", sx1Y);
+    values.put("sx2Y", sx2Y);
 
-    System.out.println("Dictionary:");
-    System.out.println("summationX1" + ": " + String.valueOf(valuesMap.get("summationX1")));
-    System.out.println("summationX2" + ": " + String.valueOf(valuesMap.get("summationX2")));
-    System.out.println("summationY" + ": " + String.valueOf(valuesMap.get("summationY")));
-    System.out.println("summationX1Square" + ": " + String.valueOf(valuesMap.get("summationX1Square")));
-    System.out.println("summationX2Square" + ": " + String.valueOf(valuesMap.get("summationX2Square")));
-    System.out.println("summationX1X2" + ": " + String.valueOf(valuesMap.get("summationX1X2")));
-    System.out.println("summationX1Y" + ": " + String.valueOf(valuesMap.get("summationX1Y")));
-    System.out.println("summationX2Y" + ": " + String.valueOf(valuesMap.get("summationX2Y")));
+    System.out.println("summationX1X2" + ": " + String.valueOf(sx1));
   }
 
-  public double getSummationX1(ArrayList<DataRegister> data) {
-    double summationX1 = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX1 += dataRegister.getX1();
+  public double operate(ArrayList<Element> data, String operation) {
+    double result = 0.0;
+    for (Element elm : data) {
+      switch(operation){
+        case "sumx1":
+            result = sumx1(result, elm.getX1());
+            break;
+        case "sumx2":
+            result = sumx2(result, elm.getX2());
+            break;
+        case "sumy":
+            result = sumy(result, elm.getY());
+            break;
+        case "sumx1sq":
+            result = sumx1sq(result, elm.getX1());
+            break;
+        case "sumx2sq":
+            result = sumx2sq(result, elm.getX2());
+            break;
+        case "sumx1x2":
+            result = sumx1x2(result, elm.getX1(), elm.getX2());
+            break;
+        case "sumx1y":
+            result = sumx1y(result, elm.getX1(), elm.getY());
+            break;
+        case "sumx2y":
+            result = sumx2y(result, elm.getX2(), elm.getY());
+            break;
+        default:
+            result = 0;
+            break;
+      }
     }
-    return summationX1;
+    return result;
   }
 
-  public double getSummationX2(ArrayList<DataRegister> data) {
-    double summationX2 = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX2 += dataRegister.getX2();
-    }
-    return summationX2;
+  public double sumx1(double sum, double value) {
+    return sum + value;
   }
 
-  public double getSummationY(ArrayList<DataRegister> data) {
-    double summationY = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationY += dataRegister.getY();
-    }
-    return summationY;
+  public double sumx2(double sum, double value) {
+    return sum  + value;
   }
 
-  public double getSummationX1Square(ArrayList<DataRegister> data) {
-    double summationX1Square = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX1Square += Math.pow(dataRegister.getX1(), 2);
-    }
-    return summationX1Square;
+  public double sumy(double sum, double value) {
+    return sum  + value;
   }
 
-  public double getSummationX2Square(ArrayList<DataRegister> data) {
-    double summationX2Square = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX2Square += Math.pow(dataRegister.getX2(), 2);
-    }
-    return summationX2Square;
+  public double sumx1sq(double sum, double value) {
+    return sum + (value * value);
   }
 
-  public double getSummationX1X2(ArrayList<DataRegister> data) {
-    double summationX1X2 = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX1X2 += (dataRegister.getX1() * dataRegister.getX2());
-    }
-    return summationX1X2;
+  public double sumx2sq(double sum, double value) {
+    return sum  + (value * value);
   }
 
-  public double getSummationX1Y(ArrayList<DataRegister> data) {
-    double summationX1Y = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX1Y += (dataRegister.getX1() * dataRegister.getY());
-    }
-    return summationX1Y;
+  public double sumx1x2(double sum, double value1, double value2) {
+    return sum  + (value1 * value2);
   }
 
-  public double getSummationX2Y(ArrayList<DataRegister> data) {
-    double summationX2Y = 0.0;
-    for (DataRegister dataRegister : data) {
-      summationX2Y += (dataRegister.getX2() * dataRegister.getY());
-    }
-    return summationX2Y;
+  public double sumx1y(double sum, double value1, double value2) {
+    return sum  + (value1 * value2);
+  }
+
+  public double sumx2y(double sum, double value1, double value2) {
+    return sum + (value1 * value2);
   }
 }
